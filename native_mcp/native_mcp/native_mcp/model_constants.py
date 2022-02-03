@@ -8,6 +8,7 @@ Editing History:
 
 import numpy as np
 import pandas as pd
+import scipy.constants as constants
 
 ########################################################################################################################
 ############################################ MODEL PARAMETER CONSTANTS #################################################
@@ -65,6 +66,7 @@ N_CALIBRATION_PARAMETERS = len(SINGLE_EXP_CALIBRATION_LIST)
 HRS_TO_SECS = 60 * 60
 # DCW to CELL CONCENTRATION
 OD_TO_CELL_CONCENTRATION = 1e15  # number of cell/m^3 per 1 OD
+AVOGADRO_CONSTANT = constants.Avogadro
 
 #######################################################################################################################
 ############################################ CELL GEOMETRY CONSTANTS ##################################################
@@ -106,7 +108,7 @@ OD_TO_CELL_COUNT = OD_TO_CELL_CONCENTRATION * EXTERNAL_VOLUME
 ########################################################################################################################
 
 
-MODEL_PARAMETER_LIST_UNITS = {'PermMCPPropanediol': 'm/s',
+PARAMS_TO_UNITS = {'PermMCPPropanediol': 'm/s',
                               'PermMCPPropionaldehyde': 'm/s',
                               'PermMCPPropanol': 'm/s',
                               'PermMCPPropionylCoA': 'm/s',
@@ -149,7 +151,7 @@ MODEL_PARAMETER_LIST_UNITS = {'PermMCPPropanediol': 'm/s',
                               'nmcps': None,
                               }
 
-VARIABLE_NAMES_UNITS = {'PROPANEDIOL_MCP': "mM",
+VARS_TO_UNITS = {'PROPANEDIOL_MCP': "mM",
                         'PROPIONALDEHYDE_MCP': "mM",
                         'PROPANOL_MCP': "mM",
                         'PROPIONYLCOA_MCP': "mM",

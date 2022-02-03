@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from os.path import dirname, abspath
-from .model_constants import N_CALIBRATION_PARAMETERS,MODEL_PARAMETER_LIST, VARS_TO_TEX, VARS_TO_UNITS
+from .model_constants import N_CALIBRATION_PARAMETERS,MODEL_PARAMETER_LIST, PARAMS_TO_UNITS, VARS_TO_UNITS, MCP_VOLUME_SPHERICAL, AVOGADRO_CONSTANT
 from exp_data import INIT_CONDS_GLY_PDO_DCW
 ROOT_PATH = dirname(dirname(dirname(dirname(abspath(__file__)))))
 
@@ -33,22 +33,22 @@ DATA_LOG_UNIF_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
                                   'PermCellPropionylPhosphate': np.log10([1e-10, 1e-2]),
                                   'PermCellPropionate': np.log10([1e-4, 1e-2]),
 
-                                  'VmaxfPduCDE': np.log10([1e4, 1e6]),
+                                  'VmaxfPduCDE': np.log10(np.array([1e4, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
                                   'KmPduCDEPropanediol': np.log10([1e-2, 1e-1]),
 
-                                  'VmaxfPduQ': np.array([1e4, 1e6]),
+                                  'VmaxfPduQ': np.log10(np.array([1e4, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
                                   'KmPduQPropionaldehyde': np.log10([1e1, 1e2]),
-                                  'VmaxrPduQ': np.log10([1e3, 1e5]),
+                                  'VmaxrPduQ': np.log10(np.log10([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL),
                                   'KmPduQPropanol': np.log10([1e1, 1e3]),
 
-                                  'VmaxfPduP': np.array([np.nan, np.log10(1e-2)]),
-                                  'KmPduPPropionaldehyde': np.log10([1e2 * 0.1, 1e3 * 10]),
-                                  'VmaxrPduP': np.log10([1e-1, 1e1]),
-                                  'KmPduPPropionylCoA': np.log10([1e1 * 0.1, 1e2 * 10]),
+                                  'VmaxfPduP': np.array([np.nan, np.log10(1e-2)]), #kcatf ~ 1000
+                                  'KmPduPPropionaldehyde': np.log10([0.1, 10]),
+                                  'VmaxrPduP': np.log10([1e-1, 1e1]), #kcatr ~ 100
+                                  'KmPduPPropionylCoA': np.log10([1e-3, 1e3]),
 
-                                  'VmaxfPduL': np.array([np.nan, np.log10(1e-2)]),
-                                  'KmPduLPropionylCoA': np.log10([1e2 * 0.1, 1e3 * 10]),
-                                  'VmaxrPduL': np.log10([1e-1, 1e1]),
+                                  'VmaxfPduL': np.array([np.nan, np.log10(1e-2)]), # not studied can use thermo
+                                  'KmPduLPropionylCoA': np.log10([1e-3, 1e3]), #not studied
+                                  'VmaxrPduL': np.log10([1e-1, 1e1]), #kcatr ~ 20.7
                                   'KmPduQPropionylPhosphate': np.log10([1e1 * 0.1, 1e2 * 10]),
 
                                   'VmaxfPduW': np.array([np.nan, np.log10(1e-2)]), #Doesnt look like much available
