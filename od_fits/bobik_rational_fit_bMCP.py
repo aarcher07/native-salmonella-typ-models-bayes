@@ -9,8 +9,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
+from os.path import dirname, abspath
+ROOT_PATH = dirname(dirname(abspath(__file__)))
 
-GC_ODs_N = pd.read_excel("data/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
+GC_ODs_N = pd.read_excel(ROOT_PATH + "/exp_data_native/data_files/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
 Time = GC_ODs_N.loc[:,('Time','Time (hrs)')].astype(np.float64)
 OD_bMCPs = GC_ODs_N.loc[:, ('Broken MCPs', 'OD')].astype(np.float64)
 

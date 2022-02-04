@@ -9,13 +9,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
+from os.path import dirname, abspath
+import pickle
 
-GC_ODs_N = pd.read_excel("data/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
+ROOT_PATH = dirname(dirname(abspath(__file__)))
+
+GC_ODs_N = pd.read_excel(ROOT_PATH + "/exp_data_native/data_files/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
 
 Time = GC_ODs_N.loc[:,('Time','Time (hrs)')].astype(np.float64)
 OD_bMCPs = GC_ODs_N.loc[:,('Broken MCPs','OD')].astype(np.float64)
 OD_MCPs = GC_ODs_N.loc[:,('WT','OD')].astype(np.float64)
-
 # log transform and fit
 
 # # Taken from https://stackoverflow.com/questions/55725139/fit-sigmoid-function-s-shape-curve-to-data-using-python
@@ -24,9 +27,9 @@ def sigmoid(x, L ,x0, k):
     return y
 
 p0 = [max(OD_bMCPs), np.median(Time), 1]  # this is an mandatory initial guess
-popt, pcov = curve_fit(sigmoid, Time, OD_bMCPs, p0, method='dogbox')
+popt_bMCPs, pcov = curve_fit(sigmoid, Time, OD_bMCPs, p0, method='dogbox')
 
-fit_fun = lambda t: sigmoid(t, *popt)
+fit_fun = lambda t: sigmoid(t, *popt_bMCPs)
 
 # plot log10 data and spline
 t = np.linspace(0, Time.iloc[-1] +2, num=int(1e3))
@@ -39,9 +42,9 @@ plt.savefig('od_plots/bobik_bMCP_sigmoid_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 p0 = [max(OD_MCPs), np.median(Time), 1]  # this is an mandatory initial guess
-popt, pcov = curve_fit(sigmoid, Time, OD_MCPs, p0, method='dogbox')
+popt_MCPs, pcov = curve_fit(sigmoid, Time, OD_MCPs, p0, method='dogbox')
 
-fit_fun = lambda t: sigmoid(t, *popt)
+fit_fun = lambda t: sigmoid(t, *popt_MCPs)
 
 # plot log10 data and spline
 t = np.linspace(0, Time.iloc[-1] +2, num=int(1e3))
@@ -63,3 +66,6 @@ plt.legend(loc='upper left')
 plt.title('OD data fit to sigmoid')
 plt.savefig('od_plots/bobik_sigmoid_OD_fit.png', bbox_inches="tight")
 plt.close()
+
+with open(ROOT_PATH + "/exp_data_native/data_files/od_fit_params_MCP_sigmoid", 'wb') as f:
+    pickle.dump(popt_MCPs, f, pickle.HIGHEST_PROTOCOL)
