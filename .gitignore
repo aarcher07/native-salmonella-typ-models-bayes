@@ -52,7 +52,8 @@ docs/_build/
 /MCMC/out/
 /MCMC/err/
 /ActiveLearning/output/active_learning_results/
-.pkl
+*.pkl
 /pdo_model/scripts/data/
 /pdo_model/scripts/plot/
 /MCMC/plot/
+*.png
