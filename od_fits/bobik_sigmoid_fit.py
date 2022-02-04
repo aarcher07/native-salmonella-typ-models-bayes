@@ -5,13 +5,11 @@ Programme written by aarcher07
 Editing History: See github history
 """
 
-from wild_type_model import WildType
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
-from constants import HRS_TO_SECS, OD_TO_COUNT_CONC
-import sympy as sp
+
 GC_ODs_N = pd.read_excel("data/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
 
 Time = GC_ODs_N.loc[:,('Time','Time (hrs)')].astype(np.float64)
@@ -37,7 +35,7 @@ plt.scatter(Time, OD_bMCPs)
 plt.plot(t, OD_bMCPs_spl)
 plt.legend(['data', 'Sigmoid'], loc='upper left')
 plt.title('OD data fit to sigmoid for broken MCPs')
-plt.savefig('figures/bobik_bMCP_sigmoid_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_sigmoid_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 p0 = [max(OD_MCPs), np.median(Time), 1]  # this is an mandatory initial guess
@@ -52,7 +50,7 @@ plt.scatter(Time, OD_MCPs)
 plt.plot(t, OD_MCPs_spl)
 plt.legend(['data', 'Sigmoid'], loc='upper left')
 plt.title('OD data fit to sigmoid for WT')
-plt.savefig('figures/bobik_MCP_sigmoid_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_MCP_sigmoid_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 # plot data and spline
@@ -63,5 +61,5 @@ plt.plot(t, OD_bMCPs_spl, label = 'spline fit for broken MCPs')
 plt.title('OD data fit to cubic spline')
 plt.legend(loc='upper left')
 plt.title('OD data fit to sigmoid')
-plt.savefig('figures/bobik_sigmoid_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_sigmoid_OD_fit.png', bbox_inches="tight")
 plt.close()

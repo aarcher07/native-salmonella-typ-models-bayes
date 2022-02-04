@@ -52,7 +52,7 @@ VARIABLE_INIT_NAMES = ['PROPANEDIOL_MCP_INIT', 'PROPIONALDEHYDE_MCP_INIT', 'PROP
                        'PROPIONYLCOA_CYTO_INIT',
                        'PROPIONYLPHOSPHATE_CYTO_INIT', 'PROPIONATE_CYTO_INIT'
 
-                       'PROPANEDIOL_EXT_INIT', 'PROPIONALDEHYDE_EXT_INIT',
+                                                       'PROPANEDIOL_EXT_INIT', 'PROPIONALDEHYDE_EXT_INIT',
                        'PROPANOL_EXT_INIT', 'PROPIONYLCOA_EXT_INIT',
                        'PROPIONYLPHOSPHATE_EXT_INIT', 'PROPIONATE_EXT_INIT']
 
@@ -107,66 +107,106 @@ OD_TO_CELL_COUNT = OD_TO_CELL_CONCENTRATION * EXTERNAL_VOLUME
 ############################################## FORMATTING CONSTANTS ####################################################
 ########################################################################################################################
 
+VARS_TO_TEX = {'PermMCPPropanediol': r'$P_{m,P}$',
+               'PermMCPPropionaldehyde': r'$P_{m,A}$',
+               'PermMCPPropanol': r'$P_{m,\text{Pol}}$',
+               'PermMCPPropionylCoA': r'$P_{m,\text{PCoA}}$',
+               'PermMCPPropionylPhosphate': r'$P_{m,\text{Pphos}}$',
+
+               'PermCellPropanediol':  r'$P_{m,P}$',
+               'PermCellPropionaldehyde':  r'$P_{m,A}$',
+               'PermCellPropanol':  r'$P_{m,\text{Pol}}$',
+               'PermCellPropionylCoA':  r'$P_{m,\text{PCoA}}$',
+               'PermCellPropionylPhosphate':  r'$P_{m,\text{Pphos}}$',
+               'PermCellPropionate':  r'$P_{m,\text{Pate}}$',
+
+               'VmaxfPduCDE': r'$V_{\text{max},\text{PduCDE}}^{f}$',
+               'KmPduCDEPropanediol': r'$K_{\text{M},\text{CDE}}^{\text{P}}$',
+
+               'VmaxfPduQ': r'$V_{\text{max},\text{PduQ}}^{f}$',
+               'KmPduQPropionaldehyde': r'$K_{\text{M},\text{PduQ}}^{\text{A}}$',
+               'VmaxrPduQ': r'$V_{\text{max},\text{PduQ}}^{r}$',
+               'KmPduQPropanol': r'$K_{\text{M},\text{PduQ}}^{\text{Pol}}$',
+
+               'VmaxfPduP': r'$V_{\text{max},\text{PduQ},f}$',
+               'KmPduPPropionaldehyde': r'$K_{\text{M},\text{PduP}}^{\text{A}}$',
+               'VmaxrPduP': r'$V_{\text{max},\text{PduP}}^{r}$',
+               'KmPduPPropionylCoA': r'$K_{\text{M},\text{PduP}}^{\text{PCoA}}$',
+
+               'VmaxfPduL': r'$V_{\text{max},\text{PduL}}^{f}$',
+               'KmPduLPropionylCoA': r'$K_{\text{M},\text{PduL}}^{\text{PCoA}}$',
+               'VmaxrPduL': r'$V_{\text{max},\text{PduL},r}$',
+               'KmPduQPropionylPhosphate': r'$K_{\text{M},\text{PduL}}^{\text{Pphos}}$',
+
+               'VmaxfPduW': r'$V_{\text{max},\text{PduW}}^{f}$',
+               'KmPduWPropionylPhosphate': r'$K_{\text{M},\text{PduL}}^{\text{Pphos}}$',
+
+               'VmaxfPrpE': r'$V_{\text{max},\text{PrpE}}^{f}$',
+               'KmPrpEPropionate': r'$K_{\text{M},\text{PrpE}}^{\text{Pate}}$',
+
+               'VmaxfPrpC': r'$V_{\text{max},\text{PrpC}}^{f}$',
+               'KmPrpCPropionylCoA': r'$K_{\text{M},\text{PrpE}}^{\text{PCoA}}$'
+               }
 
 PARAMS_TO_UNITS = {'PermMCPPropanediol': 'm/s',
-                              'PermMCPPropionaldehyde': 'm/s',
-                              'PermMCPPropanol': 'm/s',
-                              'PermMCPPropionylCoA': 'm/s',
-                              'PermMCPPropionylPhosphate': 'm/s',
+                   'PermMCPPropionaldehyde': 'm/s',
+                   'PermMCPPropanol': 'm/s',
+                   'PermMCPPropionylCoA': 'm/s',
+                   'PermMCPPropionylPhosphate': 'm/s',
 
-                              'PermCellPropanediol': 'm/s',
-                              'PermCellPropionaldehyde': 'm/s',
-                              'PermCellPropanol': 'm/s',
-                              'PermCellPropionylCoA': 'm/s',
-                              'PermCellPropionylPhosphate': 'm/s',
-                              'PermCellPropionate': 'm/s',
+                   'PermCellPropanediol': 'm/s',
+                   'PermCellPropionaldehyde': 'm/s',
+                   'PermCellPropanol': 'm/s',
+                   'PermCellPropionylCoA': 'm/s',
+                   'PermCellPropionylPhosphate': 'm/s',
+                   'PermCellPropionate': 'm/s',
 
-                              'VmaxfPduCDE': "mM/s",
-                              'KmPduCDEPropanediol': "mM",
+                   'VmaxfPduCDE': "mM/s",
+                   'KmPduCDEPropanediol': "mM",
 
-                              'VmaxfPduQ': "mM/s",
-                              'KmPduQPropionaldehyde': "mM",
-                              'VmaxrPduQ': "mM/s",
-                              'KmPduQPropanol': "mM",
+                   'VmaxfPduQ': "mM/s",
+                   'KmPduQPropionaldehyde': "mM",
+                   'VmaxrPduQ': "mM/s",
+                   'KmPduQPropanol': "mM",
 
-                              'VmaxfPduP': "mM/s",
-                              'KmPduPPropionaldehyde': "mM",
-                              'VmaxrPduP': "mM/s",
-                              'KmPduPPropionylCoA': "mM",
+                   'VmaxfPduP': "mM/s",
+                   'KmPduPPropionaldehyde': "mM",
+                   'VmaxrPduP': "mM/s",
+                   'KmPduPPropionylCoA': "mM",
 
-                              'VmaxfPduL': "mM/s",
-                              'KmPduLPropionylCoA': "mM",
-                              'VmaxrPduL': "mM/s",
-                              'KmPduQPropionylPhosphate': "mM",
+                   'VmaxfPduL': "mM/s",
+                   'KmPduLPropionylCoA': "mM",
+                   'VmaxrPduL': "mM/s",
+                   'KmPduQPropionylPhosphate': "mM",
 
-                              'VmaxfPduW': "mM/s",
-                              'KmPduWPropionylPhosphate': "mM",
+                   'VmaxfPduW': "mM/s",
+                   'KmPduWPropionylPhosphate': "mM",
 
-                              'VmaxfPrpE': "mM/s",
-                              'KmPduQPropionate': "mM",
+                   'VmaxfPrpE': "mM/s",
+                   'KmPrpEPropionate': "mM",
 
-                              'VmaxfPrpC': "mM/s",
-                              'KmPduQPropionylCoA': "mM",
+                   'VmaxfPrpC': "mM/s",
+                   'KmPduCPropionylCoA': "mM",
 
-                              'nmcps': None,
-                              }
+                   'nmcps': None,
+                   }
 
 VARS_TO_UNITS = {'PROPANEDIOL_MCP': "mM",
-                        'PROPIONALDEHYDE_MCP': "mM",
-                        'PROPANOL_MCP': "mM",
-                        'PROPIONYLCOA_MCP': "mM",
-                        'PROPIONYLPHOSPHATE_MCP': "mM",
+                 'PROPIONALDEHYDE_MCP': "mM",
+                 'PROPANOL_MCP': "mM",
+                 'PROPIONYLCOA_MCP': "mM",
+                 'PROPIONYLPHOSPHATE_MCP': "mM",
 
-                        'PROPANEDIOL_CYTO': "mM",
-                        'PROPIONALDEHYDE_CYTO': "mM",
-                        'PROPANOL_CYTO': "mM",
-                        'PROPIONYLCOA_CYTO': "mM",
-                        'PROPIONYLPHOSPHATE_CYTO': "mM",
-                        'PROPIONATE_CYTO': "mM",
+                 'PROPANEDIOL_CYTO': "mM",
+                 'PROPIONALDEHYDE_CYTO': "mM",
+                 'PROPANOL_CYTO': "mM",
+                 'PROPIONYLCOA_CYTO': "mM",
+                 'PROPIONYLPHOSPHATE_CYTO': "mM",
+                 'PROPIONATE_CYTO': "mM",
 
-                        'PROPANEDIOL_EXT': "mM",
-                        'PROPIONALDEHYDE_EXT': "mM",
-                        'PROPANOL_EXT': "mM",
-                        'PROPIONYLCOA_EXT': "mM",
-                        'PROPIONYLPHOSPHATE_EXT': "mM",
-                        'PROPIONATE_EXT': "mM"}
+                 'PROPANEDIOL_EXT': "mM",
+                 'PROPIONALDEHYDE_EXT': "mM",
+                 'PROPANOL_EXT': "mM",
+                 'PROPIONYLCOA_EXT': "mM",
+                 'PROPIONYLPHOSPHATE_EXT': "mM",
+                 'PROPIONATE_EXT': "mM"}

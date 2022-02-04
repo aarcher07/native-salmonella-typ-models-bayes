@@ -10,7 +10,8 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from os.path import dirname, abspath
-from .model_constants import N_CALIBRATION_PARAMETERS,MODEL_PARAMETER_LIST, PARAMS_TO_UNITS, VARS_TO_UNITS, MCP_VOLUME_SPHERICAL, AVOGADRO_CONSTANT
+from .model_constants import N_CALIBRATION_PARAMETERS,MODEL_PARAMETER_LIST, PARAMS_TO_UNITS, VARS_TO_UNITS,\
+    MCP_VOLUME_SPHERICAL, AVOGADRO_CONSTANT, VARS_TO_TEX
 from exp_data import INIT_CONDS_GLY_PDO_DCW
 ROOT_PATH = dirname(dirname(dirname(dirname(abspath(__file__)))))
 
@@ -38,131 +39,73 @@ DATA_LOG_UNIF_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
 
                                   'VmaxfPduQ': np.log10(np.array([1e4, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
                                   'KmPduQPropionaldehyde': np.log10([1e1, 1e2]),
-                                  'VmaxrPduQ': np.log10(np.log10([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL),
+                                  'VmaxrPduQ': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL),
                                   'KmPduQPropanol': np.log10([1e1, 1e3]),
 
-                                  'VmaxfPduP': np.array([np.nan, np.log10(1e-2)]), #kcatf ~ 1000
+                                  'VmaxfPduP': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatf ~ 1000
                                   'KmPduPPropionaldehyde': np.log10([0.1, 10]),
-                                  'VmaxrPduP': np.log10([1e-1, 1e1]), #kcatr ~ 100
+                                  'VmaxrPduP': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatr ~ 100
                                   'KmPduPPropionylCoA': np.log10([1e-3, 1e3]),
 
-                                  'VmaxfPduL': np.array([np.nan, np.log10(1e-2)]), # not studied can use thermo
+                                  'VmaxfPduL': np.log10(np.array([1e1, 1e2]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), # not studied can use thermo
                                   'KmPduLPropionylCoA': np.log10([1e-3, 1e3]), #not studied
-                                  'VmaxrPduL': np.log10([1e-1, 1e1]), #kcatr ~ 20.7
-                                  'KmPduQPropionylPhosphate': np.log10([1e1 * 0.1, 1e2 * 10]),
+                                  'VmaxrPduL': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatr ~ 20.7
+                                  'KmPduQPropionylPhosphate': np.log10([1e-1, 1e1]),
 
-                                  'VmaxfPduW': np.array([np.nan, np.log10(1e-2)]), #Doesnt look like much available
-                                  'KmPduWPropionylPhosphate': np.log10([1e2 * 0.1, 1e3 * 10]),#Doesnt look like much available
+                                  'VmaxfPduW': np.log10([1e3, 1e5]), #Doesnt look like much available
+                                  'KmPduWPropionylPhosphate': np.log10([1e-1, 1e1]),#Doesnt look like much available
 
-                                  'VmaxfPrpE': np.log10([1e-1, 1e1]),
-                                  'KmPduQPropionate': np.log10([1e1 * 0.1, 1e2 * 10]),
+                                  'VmaxfPrpE': np.log10([1e3, 1e5]), #TODO: put in actual values
+                                  'KmPrpEPropionate': np.log10([1e-1, 1e1]), #TODO: put in actual values
 
-                                  'VmaxfPrpC': np.log10([1e-1, 1e1]),
-                                  'KmPduQPropionylCoA': np.log10([1e1 * 0.1, 1e2 * 10]),
+                                  'VmaxfPrpC': np.log10([1e-1, 1e1]), #TODO: put in actual values
+                                  'KmPrpCPropionylCoA': np.log10([1e1 * 0.1, 1e2 * 10]), #TODO: put in actual values
                                   }
 
 # Normal model distribution parameters
 LOG_NORM_MODEL_PRIOR_MEAN = {param_name: np.mean(DATA_LOG_UNIF_PARAMETER_RANGES[param_name])
                              for param_name in MODEL_PARAMETER_LIST}
-LOG_NORM_MODEL_PRIOR_MEAN['PermCell3HPA'] = -4
 LOG_NORM_MODEL_PRIOR_STD = {param_name: (DATA_LOG_UNIF_PARAMETER_RANGES[param_name][1]
                                          -np.mean(DATA_LOG_UNIF_PARAMETER_RANGES[param_name]))/2
                             for param_name in MODEL_PARAMETER_LIST}
-
-LOG_NORM_MODEL_PRIOR_STD['PermCell3HPA'] = (DATA_LOG_UNIF_PARAMETER_RANGES['PermCell3HPA'][1]+4)/2
 
 LOG_NORM_MODEL_PRIOR_PARAMETERS = {param_name: [LOG_NORM_MODEL_PRIOR_MEAN[param_name],
                                                 LOG_NORM_MODEL_PRIOR_STD[param_name]]
                                    for param_name in MODEL_PARAMETER_LIST}
 
 # Glycerol model distribution parameters
-NORM_G_EXT_INIT_PRIOR_PARAMETERS = {'G_EXT_INIT_50': [INIT_CONDS_GLY_PDO_DCW[50][0], 15.],
-                                    'G_EXT_INIT_60': [INIT_CONDS_GLY_PDO_DCW[60][0], 15.],
-                                    'G_EXT_INIT_70': [INIT_CONDS_GLY_PDO_DCW[70][0], 15.],
-                                    'G_EXT_INIT_80': [INIT_CONDS_GLY_PDO_DCW[80][0], 15.]
-                                    }
+NORM_EXT_INIT_PRIOR_PARAMETERS = {'PROPANEDIOL_EXT_INIT': [INIT_CONDS[0, 0], 5.],
+                                  }
 
-NORM_G_EXT_INIT_PRIOR_MEAN = {param_name: NORM_G_EXT_INIT_PRIOR_PARAMETERS[param_name][0]
-                              for param_name in NORM_G_EXT_INIT_PRIOR_PARAMETERS.keys()}
+NORM_EXT_INIT_PRIOR_MEAN = {param_name: NORM_EXT_INIT_PRIOR_PARAMETERS[param_name][0]
+                            for param_name in NORM_EXT_INIT_PRIOR_PARAMETERS.keys()}
 
-NORM_G_EXT_INIT_PRIOR_STD = {param_name: NORM_G_EXT_INIT_PRIOR_PARAMETERS[param_name][1]
-                             for param_name in NORM_G_EXT_INIT_PRIOR_PARAMETERS.keys()}
-
-# DCW model distribution parameters
-
-NORM_DCW_PRIOR_PARAMETERS_50 = {param_name + '_50': [mean, std] for param_name, mean, std in zip(NORM_DCW_MEAN_PRIOR_PARAMETERS.columns,
-                                                                                                 NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[50, :],
-                                                                                                 NORM_DCW_STD_PRIOR_PARAMETERS.loc[50, :])}
-
-NORM_DCW_PRIOR_PARAMETERS_60 = {param_name + '_60': [mean, std] for param_name, mean, std in zip(NORM_DCW_MEAN_PRIOR_PARAMETERS.columns,
-                                                                                                 NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[60, :],
-                                                                                                 NORM_DCW_STD_PRIOR_PARAMETERS.loc[60, :])}
-
-NORM_DCW_PRIOR_PARAMETERS_70 = {param_name + '_70': [mean, std] for param_name, mean, std in zip(NORM_DCW_MEAN_PRIOR_PARAMETERS.columns,
-                                                                                                 NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[70, :],
-                                                                                                 NORM_DCW_STD_PRIOR_PARAMETERS.loc[70, :])}
-
-NORM_DCW_PRIOR_PARAMETERS_80 = {param_name + '_80': [mean, std] for param_name, mean, std in zip(NORM_DCW_MEAN_PRIOR_PARAMETERS.columns,
-                                                                                                 NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[80, :],
-                                                                                                 NORM_DCW_STD_PRIOR_PARAMETERS.loc[80, :])}
+NORM_EXT_INIT_PRIOR_STD = {param_name: NORM_EXT_INIT_PRIOR_PARAMETERS[param_name][1]
+                           for param_name in NORM_EXT_INIT_PRIOR_PARAMETERS.keys()}
 
 # prior parameters for single experiment
-NORM_PRIOR_MEAN_SINGLE_EXP = {}
-NORM_PRIOR_STD_RT_SINGLE_EXP = {}
-for gly_cond in [50,60,70,80]:
-    NORM_PRIOR_MEAN_SINGLE_EXP[gly_cond] = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),
-                                                     NORM_G_EXT_INIT_PRIOR_MEAN['G_EXT_INIT_' + str(gly_cond)],
-                                                     *NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[gly_cond, :].tolist()])
-    NORM_PRIOR_STD_RT_SINGLE_EXP[gly_cond] = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values()),
-                                                      NORM_G_EXT_INIT_PRIOR_STD['G_EXT_INIT_' + str(gly_cond)],
-                                                      *NORM_DCW_STD_PRIOR_PARAMETERS.loc[gly_cond, :].tolist()])
+NORM_PRIOR_MEAN_SINGLE_EXP = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),
+                                       NORM_EXT_INIT_PRIOR_MEAN['PROPANEDIOL_EXT_INIT']])
+NORM_PRIOR_STD_RT_SINGLE_EXP = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values()),
+                                        NORM_EXT_INIT_PRIOR_STD['PROPANEDIOL_EXT_INIT']])
 
 # prior parameters for all experiment
-NORM_PRIOR_PARAMETER_ALL_EXP_DICT = {**LOG_NORM_MODEL_PRIOR_PARAMETERS, **NORM_G_EXT_INIT_PRIOR_PARAMETERS,
-                                     **NORM_DCW_PRIOR_PARAMETERS_50,  **NORM_DCW_PRIOR_PARAMETERS_60,
-                                     **NORM_DCW_PRIOR_PARAMETERS_70, **NORM_DCW_PRIOR_PARAMETERS_80}
+NORM_PRIOR_PARAMETER_ALL_EXP_DICT = {**LOG_NORM_MODEL_PRIOR_PARAMETERS, **NORM_EXT_INIT_PRIOR_PARAMETERS}
 
 NORM_PRIOR_MEAN_ALL_EXP = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),
-                                    *list(NORM_G_EXT_INIT_PRIOR_MEAN.values()),
-                                    *NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[50, :].tolist(),
-                                    *NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[60, :].tolist(),
-                                    *NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[70, :].tolist(),
-                                    *NORM_DCW_MEAN_PRIOR_PARAMETERS.loc[80, :].tolist()])
+                                    *list(NORM_EXT_INIT_PRIOR_MEAN.values())])
 
 
 NORM_PRIOR_STD_RT_ALL_EXP = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values()),
-                                     *list(NORM_G_EXT_INIT_PRIOR_STD.values()),
-                                     *NORM_DCW_STD_PRIOR_PARAMETERS.loc[50, :].tolist(),
-                                     *NORM_DCW_STD_PRIOR_PARAMETERS.loc[60, :].tolist(),
-                                     *NORM_DCW_STD_PRIOR_PARAMETERS.loc[70, :].tolist(),
-                                     *NORM_DCW_STD_PRIOR_PARAMETERS.loc[80, :].tolist()])
+                                     *list(NORM_EXT_INIT_PRIOR_STD.values())])
 
 
 # teX names for parameters
+EXT_INIT_TO_TEX = {'PROPANEDIOL_EXT_INIT': "$P(0)$ for first experiment"}
 
-G_EXT_INIT_TO_TEX = {'G_EXT_INIT_50': "$G(0)$ for first experiment",
-                     'G_EXT_INIT_60': "$G(0)$ for second experiment",
-                     'G_EXT_INIT_70': "$G(0)$ for third experiment",
-                     'G_EXT_INIT_80': "$G(0)$ for fourth experiment"
-                     }
+VARS_ALL_EXP_TO_TEX = {**VARS_TO_TEX,
+                       **EXT_INIT_TO_TEX}
 
-DCW_TO_TEX_50 = {param_name + "_50": "$"+param_name + "_{50}$" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_TEX_60 = {param_name + "_60": "$"+param_name + "_{60}$" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_TEX_70 = {param_name + "_70": "$"+param_name + "_{70}$" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_TEX_80 = {param_name + "_80": "$"+param_name + "_{80}$" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
+G_EXT_INIT_TO_TEX = {'PROPANEDIOL_EXT_INIT': "mM"}
 
-VARS_ALL_EXP_TO_TEX = {**VARS_TO_TEX, **G_EXT_INIT_TO_TEX, **DCW_TO_TEX_50, **DCW_TO_TEX_60, **DCW_TO_TEX_70,
-                       **DCW_TO_TEX_80}
-
-G_EXT_INIT_TO_TEX = {'G_EXT_INIT_50': "mM",
-                     'G_EXT_INIT_60': "mM",
-                     'G_EXT_INIT_70': "mM",
-                     'G_EXT_INIT_80': "mM"
-                     }
-DCW_TO_UNITS_50 = {param_name + "_50": "" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_UNITS_60 = {param_name + "_60": "" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_UNITS_70 = {param_name + "_70": "" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-DCW_TO_UNITS_80 = {param_name + "_80": "" for param_name in NORM_DCW_MEAN_PRIOR_PARAMETERS.columns}
-
-VARS_ALL_EXP_TO_UNITS = {**VARS_TO_UNITS, **G_EXT_INIT_TO_TEX, **DCW_TO_UNITS_50, **DCW_TO_UNITS_60, **DCW_TO_UNITS_70,
-                         **DCW_TO_UNITS_80}
+VARS_ALL_EXP_TO_UNITS = {**VARS_TO_UNITS, **G_EXT_INIT_TO_TEX}

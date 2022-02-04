@@ -5,13 +5,10 @@ Programme written by aarcher07
 Editing History: See github history
 """
 
-from wild_type_model import WildType
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
-from constants import HRS_TO_SECS, OD_TO_COUNT_CONC
-import sympy as sp
 
 GC_ODs_N = pd.read_excel("data/bobik_times_series_data_cleaned.xlsx", engine='openpyxl',header=[0,1]).dropna()
 Time = GC_ODs_N.loc[:,('Time','Time (hrs)')].astype(np.float64)
@@ -47,7 +44,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 2$')
-plt.savefig('figures/bobik_bMCP_rational_2_2_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_2_2_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 def rational3_3(x, p0, p1, p2, p3, q0,q1, q2):
@@ -65,7 +62,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 3$')
-plt.savefig('figures/bobik_bMCP_rational_3_3_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_3_3_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 
@@ -84,7 +81,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 4$')
-plt.savefig('figures/bobik_bMCP_rational_4_4_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_4_4_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 
@@ -104,7 +101,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 5$')
-plt.savefig('figures/bobik_bMCP_rational_5_5_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_5_5_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 
@@ -123,7 +120,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 6$')
-plt.savefig('figures/bobik_bMCP_rational_6_6_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_6_6_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 ########################################################################################################################
@@ -144,7 +141,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 2$')
-plt.savefig('figures/bobik_bMCP_rational_2_2_constrained_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_2_2_constrained_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 def rational3_3(x, p0, p1, p2, q1, q2):
@@ -161,7 +158,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 3$')
-plt.savefig('figures/bobik_bMCP_rational_3_3_constrained_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_3_3_constrained_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 def rational4_4(x, p0, p1, p2,p3, q1, q2,q3):
@@ -178,7 +175,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 4$')
-plt.savefig('figures/bobik_bMCP_rational_4_4_constrained_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_4_4_constrained_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 def rational5_5(x, p0, p1, p2,p3,p4, q1, q2,q3,q4):
@@ -195,7 +192,7 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 5$')
-plt.savefig('figures/bobik_bMCP_rational_5_5_constrained_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_5_5_constrained_OD_fit.png', bbox_inches="tight")
 plt.close()
 
 
@@ -213,5 +210,5 @@ plt.xlabel('time')
 plt.ylabel('OD')
 plt.legend(['rational function', 'data'], loc='upper left')
 plt.title('OD fit to rational function,' + r'$\frac{\sum_{i=0}^{n}p_ix^i}{1+\sum_{i=1}^{n}q_ix^i}$' + ', for $n = 6$')
-plt.savefig('figures/bobik_bMCP_rational_6_6_constrained_OD_fit.png', bbox_inches="tight")
+plt.savefig('od_plots/bobik_bMCP_rational_6_6_constrained_OD_fit.png', bbox_inches="tight")
 plt.close()
