@@ -6,7 +6,7 @@ from multiprocessing import Pool
 from exp_data import TIME_SAMPLES, DATA_SAMPLES, STD_EXPERIMENTAL_DATA, INIT_CONDS_GLY_PDO_DCW
 import numpy as np
 
-pdo_model = pdo_model_log()
+mcp_model = pdo_model_log()
 
 def qoi_mse_grad(exp_ind, params, atol, rtol, type):
     """
@@ -37,7 +37,7 @@ def qoi_mse_grad(exp_ind, params, atol, rtol, type):
     tmatrix = NORM_PRIOR_STD_RT_SINGLE_EXP[gly_cond][:(N_MODEL_PARAMETERS+1),:(N_MODEL_PARAMETERS+1)]
 
     # get loglik_all_exp
-    qoi_mse, dloglikdparam, dloglikdparamdparam = pdo_model.get_loglik_single_exp(exp_params, evaluation_times, experimental_data_mat,
+    qoi_mse, dloglikdparam, dloglikdparamdparam = mcp_model.get_loglik_single_exp(exp_params, evaluation_times, experimental_data_mat,
                                                                                   sigma_exp_matrix, tmatrix, atol, rtol, type)
     return qoi_mse, dloglikdparam, dloglikdparamdparam
 

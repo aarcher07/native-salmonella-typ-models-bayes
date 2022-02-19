@@ -34,32 +34,32 @@ DATA_LOG_UNIF_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
                                   'PermCellPropionylPhosphate': np.log10([1e-10, 1e-2]),
                                   'PermCellPropionate': np.log10([1e-4, 1e-2]),
 
-                                  'VmaxfPduCDE': np.log10(np.array([1e4, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
+                                  'VmaxfPduCDE': np.log10(np.array([1e3, 1e7])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
                                   'KmPduCDEPropanediol': np.log10([1e-2, 1e-1]),
 
-                                  'VmaxfPduQ': np.log10(np.array([1e4, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
-                                  'KmPduQPropionaldehyde': np.log10([1e1, 1e2]),
-                                  'VmaxrPduQ': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL),
-                                  'KmPduQPropanol': np.log10([1e1, 1e3]),
+                                  'VmaxfPduQ': np.log10(np.array([1e3, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
+                                  'KmPduQPropionaldehyde': np.log10([1e-2, 1e3]),
+                                  'VmaxrPduQ': np.log10(np.array([1e2, 1e5])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)),
+                                  'KmPduQPropanol': np.log10([1e0, 1e4]),
 
-                                  'VmaxfPduP': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatf ~ 1000
+                                  'VmaxfPduP': np.log10(np.array([1e3, 1e8])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)), #kcatf ~ 1000
                                   'KmPduPPropionaldehyde': np.log10([0.1, 10]),
-                                  'VmaxrPduP': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatr ~ 100
-                                  'KmPduPPropionylCoA': np.log10([1e-3, 1e3]),
+                                  'VmaxrPduP': np.log10(np.array([1e2, 1e7])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)), #kcatr ~ 100
+                                  'KmPduPPropionylCoA': np.log10([1e-2, 1e3]),
 
-                                  'VmaxfPduL': np.log10(np.array([1e1, 1e2]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), # not studied can use thermo
+                                  'VmaxfPduL': np.log10(np.array([1e1, 1e4])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)), # not studied can use thermo
                                   'KmPduLPropionylCoA': np.log10([1e-3, 1e3]), #not studied
-                                  'VmaxrPduL': np.log10(np.array([1e3, 1e5]))/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL), #kcatr ~ 20.7
-                                  'KmPduQPropionylPhosphate': np.log10([1e-1, 1e1]),
+                                  'VmaxrPduL': np.log10(np.array([1e2, 1e6])/(AVOGADRO_CONSTANT * MCP_VOLUME_SPHERICAL)), #kcatr ~ 20.7
+                                  'KmPduQPropionylPhosphate': np.log10([1e-3, 1e0]),
 
-                                  'VmaxfPduW': np.log10([1e3, 1e5]), #Doesnt look like much available
-                                  'KmPduWPropionylPhosphate': np.log10([1e-1, 1e1]),#Doesnt look like much available
+                                  'VmaxfPduW': np.log10([1e0, 1e3]), #Doesnt look like much available
+                                  'KmPduWPropionylPhosphate': np.log10([1e-3, 1e3]),#Doesnt look like much available
 
-                                  'VmaxfPrpE': np.log10([1e3, 1e5]), #TODO: put in actual values
-                                  'KmPrpEPropionate': np.log10([1e-1, 1e1]), #TODO: put in actual values
+                                  'VmaxfPrpE': np.log10([1e-2, 1e3]),
+                                  'KmPrpEPropionate': np.log10([1e-3, 1e0]),
 
-                                  'VmaxfPrpC': np.log10([1e-1, 1e1]), #TODO: put in actual values
-                                  'KmPrpCPropionylCoA': np.log10([1e1 * 0.1, 1e2 * 10]), #TODO: put in actual values
+                                  'VmaxfPrpC': np.log10([1e-1, 1e3]),
+                                  'KmPrpCPropionylCoA': np.log10([1e-4, 1e0])
                                   }
 
 # Normal model distribution parameters
@@ -73,39 +73,3 @@ LOG_NORM_MODEL_PRIOR_PARAMETERS = {param_name: [LOG_NORM_MODEL_PRIOR_MEAN[param_
                                                 LOG_NORM_MODEL_PRIOR_STD[param_name]]
                                    for param_name in MODEL_PARAMETER_LIST}
 
-# Glycerol model distribution parameters
-NORM_EXT_INIT_PRIOR_PARAMETERS = {'PROPANEDIOL_EXT_INIT': [INIT_CONDS[0, 0], 5.],
-                                  }
-
-NORM_EXT_INIT_PRIOR_MEAN = {param_name: NORM_EXT_INIT_PRIOR_PARAMETERS[param_name][0]
-                            for param_name in NORM_EXT_INIT_PRIOR_PARAMETERS.keys()}
-
-NORM_EXT_INIT_PRIOR_STD = {param_name: NORM_EXT_INIT_PRIOR_PARAMETERS[param_name][1]
-                           for param_name in NORM_EXT_INIT_PRIOR_PARAMETERS.keys()}
-
-# prior parameters for single experiment
-NORM_PRIOR_MEAN_SINGLE_EXP = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),
-                                       NORM_EXT_INIT_PRIOR_MEAN['PROPANEDIOL_EXT_INIT']])
-NORM_PRIOR_STD_RT_SINGLE_EXP = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values()),
-                                        NORM_EXT_INIT_PRIOR_STD['PROPANEDIOL_EXT_INIT']])
-
-# prior parameters for all experiment
-NORM_PRIOR_PARAMETER_ALL_EXP_DICT = {**LOG_NORM_MODEL_PRIOR_PARAMETERS, **NORM_EXT_INIT_PRIOR_PARAMETERS}
-
-NORM_PRIOR_MEAN_ALL_EXP = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),
-                                    *list(NORM_EXT_INIT_PRIOR_MEAN.values())])
-
-
-NORM_PRIOR_STD_RT_ALL_EXP = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values()),
-                                     *list(NORM_EXT_INIT_PRIOR_STD.values())])
-
-
-# teX names for parameters
-EXT_INIT_TO_TEX = {'PROPANEDIOL_EXT_INIT': "$P(0)$ for first experiment"}
-
-VARS_ALL_EXP_TO_TEX = {**VARS_TO_TEX,
-                       **EXT_INIT_TO_TEX}
-
-G_EXT_INIT_TO_TEX = {'PROPANEDIOL_EXT_INIT': "mM"}
-
-VARS_ALL_EXP_TO_UNITS = {**VARS_TO_UNITS, **G_EXT_INIT_TO_TEX}

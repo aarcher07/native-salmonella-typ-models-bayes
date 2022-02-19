@@ -34,15 +34,10 @@ MODEL_PARAMETER_LIST = ['PermMCPPropanediol', 'PermMCPPropionaldehyde', 'PermMCP
                         'VmaxfPduW', 'KmPduWPropionylPhosphate',
                         'VmaxfPrpE', 'KmPrpEPropionate',
                         'VmaxrfPrpC', 'KmPrpCPropionylCoA',
-
-                        'nmcps'
                         ]
 
 SINGLE_EXP_CALIBRATION_LIST = [*MODEL_PARAMETER_LIST,
-
-                               'PROPANEDIOL_EXT_INIT', 'PROPIONALDEHYDE_EXT_INIT', 'PROPANOL_EXT_INIT',
-                               'PROPIONYLCOA_EXT_INIT', 'PROPIONYLPHOSPHATE_EXT_INIT',
-                               'PROPIONATE_EXT_INIT'
+                                'nmcps'
                                ]
 
 VARIABLE_INIT_NAMES = ['PROPANEDIOL_MCP_INIT', 'PROPIONALDEHYDE_MCP_INIT', 'PROPANOL_MCP_INIT', 'PROPIONYLCOA_MCP_INIT',
@@ -56,7 +51,7 @@ VARIABLE_INIT_NAMES = ['PROPANEDIOL_MCP_INIT', 'PROPIONALDEHYDE_MCP_INIT', 'PROP
                        'PROPANOL_EXT_INIT', 'PROPIONYLCOA_EXT_INIT',
                        'PROPIONYLPHOSPHATE_EXT_INIT', 'PROPIONATE_EXT_INIT']
 
-N_VARIABLES = 17
+N_VARIABLES = len(VARIABLE_INIT_NAMES)
 N_MODEL_PARAMETERS = len(MODEL_PARAMETER_LIST)
 N_CALIBRATION_PARAMETERS = len(SINGLE_EXP_CALIBRATION_LIST)
 ########################################################################################################################

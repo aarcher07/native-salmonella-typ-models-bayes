@@ -1,5 +1,5 @@
 from .model_constants import *
 from .prior_constants import *
-from .native_mcp import pdo_model
-from .native_mcp_log import pdo_model_log
+from .pdu_mcp_model import pdu_mcp_model
+from .pdu_mcp_model_log import pdu_mcp_model
 from .logpost import logpost

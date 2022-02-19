@@ -49,7 +49,7 @@ plt.legend(loc='upper left')
 plt.title('OD data fit to sigmoid')
 plt.show()
 
-with open(ROOT_PATH + "/exp_data_native/data_files/od_fit_params_MCP_sigmoid", 'wb') as f:
+with open(ROOT_PATH + "/exp_data_native/data_files/od_fit_params_MCP_sigmoid.pkl", 'wb') as f:
     pickle.dump(popt_MCPs, f, pickle.HIGHEST_PROTOCOL)
-with open(ROOT_PATH + "/exp_data_native/data_files/od_fit_params_bMCP_rat", 'wb') as f:
+with open(ROOT_PATH + "/exp_data_native/data_files/od_fit_params_bMCP_rat.pkl", 'wb') as f:
     pickle.dump(popt_bMCPs, f, pickle.HIGHEST_PROTOCOL)

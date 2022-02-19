@@ -3,28 +3,32 @@ mpl.rcParams['text.usetex'] = True
 mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 import matplotlib.pyplot as plt
 from pdo_model_sympy import *
-from exp_data import TIME_SAMPLES, DATA_SAMPLES
+from exp_data import TIME_SAMPLES, DATA_SAMPLES, INIT_CONDS
 import time
 
 def test_QoI():
-    for gly_cond in [50,60,70,80]:
         params_mean = NORM_PRIOR_MEAN_SINGLE_EXP[gly_cond]
         params_mean = {key: val for key, val in zip(SINGLE_EXP_CALIBRATION_LIST,params_mean)}
-        params_mean['PermCellGlycerol'] = -4
-        params_mean['PermCellPDO'] = -5
-        params_mean['PermCell3HPA'] = -4
-        params_mean['VmaxfDhaB'] = 2.5
-        params_mean['KmDhaBG'] = -1
-        params_mean['VmaxfDhaT'] = 3
-        params_mean['KmDhaTH'] = -2
-        params_mean['VmaxfMetab'] = 1.5
-        params_mean['KmMetabG'] = -1
-        init_conds={'G_CYTO_INIT': 0.,
-                    'H_CYTO_INIT': 0.,
-                    'P_CYTO_INIT': 0.,
-                    'H_EXT_INIT': 0.,
-                    'P_EXT_INIT': INIT_CONDS_GLY_PDO_DCW[gly_cond][1]
-                    }
+        params_mean['nmcps'] = 20
+        init_conds = {'PROPANEDIOL_MCP_INIT': 0,
+                      'PROPIONALDEHYDE_MCP_INIT': 0,
+                      'PROPANOL_MCP_INIT': 0,
+                      'PROPIONYLCOA_MCP_INIT': 0,
+                      'PROPIONYLPHOSPHATE_MCP_INIT': 0,
+
+                      'PROPANEDIOL_CYTO_INIT': 0,
+                      'PROPIONALDEHYDE_CYTO_INIT': 0,
+                      'PROPANOL_CYTO_INIT': 0,
+                      'PROPIONYLCOA_CYTO_INIT': 0,
+                      'PROPIONYLPHOSPHATE_CYTO_INIT': 0,
+                      'PROPIONATE_CYTO_INIT': 0,
+
+                      'PROPANEDIOL_EXT_INIT': DATA_SAMPLES['WT'][0,0],
+                      'PROPIONALDEHYDE_EXT_INIT': DATA_SAMPLES['WT'][0, 1],
+                      'PROPANOL_EXT_INIT': DATA_SAMPLES['WT'][0, 2],
+                      'PROPIONYLCOA_EXT_INIT': 0,
+                      'PROPIONYLPHOSPHATE_EXT_INIT': 0,
+                      'PROPIONATE_EXT_INIT': DATA_SAMPLES['WT'][0, 3]}
         params = {**params_mean, **init_conds}
 
         pdo_model = pdo_model_log()

@@ -15,7 +15,7 @@ np <- import("numpy")
 ntimepts <- 250
 nsamples <- 1e4
 maxtime <- 29
-home_directory <-"/home/aarcher/pdo-pathway-model/pdo_model/scripts"
+home_directory <-"/home/aarcher/pdo-pathway-model/pdu_mcp_model/scripts"
 directory <- paste(home_directory,"/data",sep="")
 directory_plot <- paste(home_directory,"/plot/",sep="")
 ```
