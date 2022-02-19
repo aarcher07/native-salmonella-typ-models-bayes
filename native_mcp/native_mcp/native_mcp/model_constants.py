@@ -33,7 +33,7 @@ MODEL_PARAMETER_LIST = ['PermMCPPropanediol', 'PermMCPPropionaldehyde', 'PermMCP
 
                         'VmaxfPduW', 'KmPduWPropionylPhosphate',
                         'VmaxfPrpE', 'KmPrpEPropionate',
-                        'VmaxrfPrpC', 'KmPrpCPropionylCoA',
+                        'VmaxfPrpC', 'KmPrpCPropionylCoA',
                         ]
 
 SINGLE_EXP_CALIBRATION_LIST = [*MODEL_PARAMETER_LIST,
@@ -45,9 +45,9 @@ VARIABLE_INIT_NAMES = ['PROPANEDIOL_MCP_INIT', 'PROPIONALDEHYDE_MCP_INIT', 'PROP
 
                        'PROPANEDIOL_CYTO_INIT', 'PROPIONALDEHYDE_CYTO_INIT', 'PROPANOL_CYTO_INIT',
                        'PROPIONYLCOA_CYTO_INIT',
-                       'PROPIONYLPHOSPHATE_CYTO_INIT', 'PROPIONATE_CYTO_INIT'
+                       'PROPIONYLPHOSPHATE_CYTO_INIT', 'PROPIONATE_CYTO_INIT',
 
-                                                       'PROPANEDIOL_EXT_INIT', 'PROPIONALDEHYDE_EXT_INIT',
+                       'PROPANEDIOL_EXT_INIT', 'PROPIONALDEHYDE_EXT_INIT',
                        'PROPANOL_EXT_INIT', 'PROPIONYLCOA_EXT_INIT',
                        'PROPIONYLPHOSPHATE_EXT_INIT', 'PROPIONATE_EXT_INIT']
 

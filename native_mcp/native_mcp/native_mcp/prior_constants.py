@@ -12,12 +12,7 @@ import scipy.stats as stats
 from os.path import dirname, abspath
 from .model_constants import N_CALIBRATION_PARAMETERS,MODEL_PARAMETER_LIST, PARAMS_TO_UNITS, VARS_TO_UNITS,\
     MCP_VOLUME_SPHERICAL, AVOGADRO_CONSTANT, VARS_TO_TEX
-from exp_data import INIT_CONDS_GLY_PDO_DCW
 ROOT_PATH = dirname(dirname(dirname(dirname(abspath(__file__)))))
-
-# DCW exp_data parameters
-NORM_DCW_MEAN_PRIOR_PARAMETERS = pd.read_csv(ROOT_PATH + '/exp_data/data_files/dcw_fit_params', index_col = 0)
-NORM_DCW_STD_PRIOR_PARAMETERS = pd.read_csv(ROOT_PATH + '/exp_data/data_files/dcw_std_params', index_col = 0)
 
 #Uniform distribution parameters
 

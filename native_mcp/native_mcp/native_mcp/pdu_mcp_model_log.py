@@ -21,8 +21,6 @@ import signal
 import matplotlib.pyplot as plt
 from de_builder_sympy import LSAModelBuilder
 from .pdu_mcp_model import pdu_mcp_model
-from exp_data import TIME_SAMPLES, DATA_SAMPLES, STD_EXPERIMENTAL_DATA, INIT_CONDS_GLY_PDO_DCW
-from .prior_constants import NORM_PRIOR_STD_RT_SINGLE_EXP, NORM_PRIOR_MEAN_SINGLE_EXP
 import multiprocessing as mp
 
 
@@ -39,7 +37,8 @@ signal.signal(signal.SIGALRM, handler)
 
 class pdu_mcp_model_log(pdu_mcp_model):
 
-    def __init__(self, cell_volume=CELL_VOLUME, cell_surface_area=CELL_SURFACE_AREA,
+    def __init__(self, mcp_volume, mcp_surface_area, cell_conc_od,
+                 cell_volume=CELL_VOLUME, cell_surface_area=CELL_SURFACE_AREA,
                  external_volume=EXTERNAL_VOLUME):
         """
         Initializes parameters to be used numerial scheme
@@ -48,8 +47,8 @@ class pdu_mcp_model_log(pdu_mcp_model):
         :param external_volume: external volume containing cells in metres^3
         """
         # geometric parameters
-        super().__init__(cell_volume, cell_surface_area, external_volume)
-
+        super().__init__(mcp_volume, mcp_surface_area, cell_conc_od,
+                         cell_volume, cell_surface_area, external_volume)
         # integration parameters
         self.mcp_model = LSAModelBuilder(self._RHS, self.nvars, self.nparams, list(range(N_MODEL_PARAMETERS + 1)))
 
@@ -93,7 +92,8 @@ class pdu_mcp_model_log(pdu_mcp_model):
         calibration_params = []
         for param_name in SINGLE_EXP_CALIBRATION_LIST:
             calibration_params.append(params[param_name])
-
+        print(params)
+        print(calibration_params)
         # ODE solver args initialization
         if type == 'qoi only':
             ds = lambda t, x: self.mcp_model.RHS(t, x, calibration_params)
@@ -116,10 +116,12 @@ class pdu_mcp_model_log(pdu_mcp_model):
 
         # initialize FLAG
         FLAG = 0
-        init_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * self.mcp_model * y0[:5].sum() \
-                    + OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * y0[
-                                                                                   5:11].sum() + self.external_volume * y0[
-                                                                                                                        -6:].sum()
+        print(y0)
+        print(OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * y0[5:11].sum())
+
+        init_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * y0[:5].sum() \
+                    + OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * y0[5:11].sum() \
+                    + self.external_volume * y0[11:17].sum()
 
         # solve ODE
         signal.alarm(100)
@@ -129,9 +131,9 @@ class pdu_mcp_model_log(pdu_mcp_model):
             sol = solve_ivp(ds, [0, 1.1 * evaluation_times[-1] * HRS_TO_SECS], y0, method="BDF", jac=ds_jac,
                             t_eval=evaluation_times * HRS_TO_SECS, atol=atol, rtol=rtol)
 
-            fin_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * self.mcp_model * sol.y[:5, -1].sum() \
+            fin_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * sol.y[:5, -1].sum() \
                        + OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * sol.y[5:11, -1].sum() \
-                       + self.external_volume * sol.y[-6:, -1].sum()
+                       + self.external_volume * sol.y[11:17, -1].sum()
             signal.alarm(0)
             time_evals = sol.t
             sol_evals = sol.y.T
@@ -151,11 +153,11 @@ class pdu_mcp_model_log(pdu_mcp_model):
 
         return FLAG, time_evals, sol_evals
 
-    def get_qoi_gly_pdo_sens(self, params, evaluation_times, atol=10 ** -6, rtol=10 ** -3,
+    def get_sol_sens(self, params, evaluation_times, atol=10 ** -6, rtol=10 ** -3,
                              type='qoi sens'):
         """
-        Integrates the DhaB-DhaT model and sensitivity equations with parameter values, param, and returns external glycerol
-         1,3-PDO and cell concentration time samples, tsamples
+        Integrates the Pdu model and sensitivity equations with parameter values, param, and returns external 1,2-PD, Propionaldehyde,
+         Propanol and Propionate time samples, tsamples
 
         @param params: unstandardized parameters to evaluate differential equation
         @param evaluation_times: times to evaluate the differential equation
@@ -167,9 +169,9 @@ class pdu_mcp_model_log(pdu_mcp_model):
                       2 if there was a TimeException
                       3 if integration was unsuccessful
                       4 if mass growth
-        @return qoi_gly_pdo_data: 1,2-PD, Propionaldehyde, Propanol and Propionate sampled at time samples, evaluation_times,
+        @return qoi: 1,2-PD, Propionaldehyde, Propanol and Propionate sampled at time samples, evaluation_times,
         (|evaluation_times| x 4 matrix)
-        @return qoi_gly_pdo_sens_data: 1,2-PD, Propionaldehyde, Propanol and Propionate senstivities sampled at time samples, evaluation_times,
+        @return qoi_sens: 1,2-PD, Propionaldehyde, Propanol and Propionate senstivities sampled at time samples, evaluation_times,
          4 x |evaluation_times| x (N_MODEL_PARAMETERS + 1)  matrix)
         """
         # format
@@ -209,18 +211,19 @@ class pdu_mcp_model_log(pdu_mcp_model):
 
         @param params: list of unstandardized parameters to evaluate differential equation
         @param evaluation_times: times to evaluate the differential equation
-        @param experimental_data_mat: Glycerol and 1,3-PDO sampled at time samples, evaluation_times,
-        (|evaluation_times| x  2 matrix)
-        @param sigma_exp_matrix: standard deviation of Glycerol, 1,3-PDO and DCW for experimental
+        @param experimental_data_mat: 1,2-PD, Propionaldehyde, Propanol and Propionate sampled at time samples, evaluation_times,
+        (|evaluation_times| x  4 matrix)
+        @param sigma_exp_matrix: standard deviation of 1,2-PD, Propionaldehyde, Propanol and Propionate for experimental
          evaluations at time samples, evaluation_times
-          (|evaluation_times| x 2 matrix)
+          (|evaluation_times| x 4 matrix)
         @param tmatrix: diagonal matrix to transform parameters
-        (N_UNKNOWN_PARAMETERS x N_UNKNOWN_PARAMETERS matrix)
         @param atol: absolute tolerance
         @param rtol: relative tolerance
 
         @return loglik: log-likelihood of a single experiment
         @return dloglikdparam: derivative of log-likelihood wrt params (|N_CALIBRATION_PARAMETERS| x 1  matrix)
+        @return dloglikdparam: derivative of log-likelihood wrt params (|N_CALIBRATION_PARAMETERS| x |N_CALIBRATION_PARAMETERS}  matrix)
+
         """
         params_dict = {}
         for param, param_name in zip(params, SINGLE_EXP_CALIBRATION_LIST):

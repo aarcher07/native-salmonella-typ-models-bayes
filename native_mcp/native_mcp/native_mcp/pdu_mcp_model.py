@@ -53,7 +53,7 @@ class pdu_mcp_model:
         self.cell_surf_external_vol_ratio = cell_surface_area / external_volume
 
         #integration parameters
-        self.nvars = 6*2+5
+        self.nvars = N_VARIABLES
         self.nparams = len(SINGLE_EXP_CALIBRATION_LIST)
         self.cell_conc_od = lambda t: cell_conc_od(t)
 
@@ -109,9 +109,9 @@ class pdu_mcp_model:
 
         R_PduWf = params_dict["VmaxfPduW"] * x[9] / (x[9] + params_dict["KmPduWPropionylPhosphate"])
 
-        R_PrpEf = params_dict["VmaxfPrpE"] * x[10] / (x[10] + params_dict["KmPduQPropionate"])
+        R_PrpEf = params_dict["VmaxfPrpE"] * x[10] / (x[10] + params_dict["KmPrpEPropionate"])
 
-        R_PrpCf = params_dict["VmaxfPrpC"] * x[8] / (x[8] + params_dict["KmPduQPropionylCoA"])
+        R_PrpCf = params_dict["VmaxfPrpC"] * x[8] / (x[8] + params_dict["KmPrpCPropionylCoA"])
 
         d[5] = - params_dict['PermCellPropanediol'] * self.cell_surf_cell_vol_ratio * (x[5] - x[11]) \
                - nmcps * params_dict['PermMCPPropanediol'] * self.MCP_surf_cell_vol_ratio * (x[5] - x[0])
