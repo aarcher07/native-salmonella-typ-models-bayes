@@ -16,13 +16,7 @@ ROOT_PATH = dirname(dirname(dirname(dirname(abspath(__file__)))))
 
 #Uniform distribution parameters
 
-DATA_LOG_UNIF_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
-                                  'PermMCPPropionaldehyde': np.log10([1e-9, 1e-7]),
-                                  'PermMCPPropanol': np.log10([1e-9, 1e-7]),
-                                  'PermMCPPropionylCoA': np.log10([1e-7, 1e-5]),
-                                  'PermMCPPropionylPhosphate': np.log10([1e-7, 1e-5]),
-
-                                  'PermCellPropanediol': np.log10([1e-6, 1e-2]),
+DATA_LOG_UNIF_PARAMETER_RANGES = {'PermCellPropanediol': np.log10([1e-6, 1e-2]),
                                   'PermCellPropionaldehyde': np.log10([1e-4, 1e-2]),
                                   'PermCellPropanol':  np.log10([1e-5, 1e-3]),
                                   'PermCellPropionylCoA': np.log10([1e-10, 1e-2]),
@@ -56,6 +50,21 @@ DATA_LOG_UNIF_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
                                   'VmaxfPrpC': np.log10([1e-1, 1e3]),
                                   'KmPrpCPropionylCoA': np.log10([1e-4, 1e0])
                                   }
+MCP_PARAMETER_RANGES = {'PermMCPPropanediol': np.log10([1e-7, 1e-5]),
+                        'PermMCPPropionaldehyde': np.log10([1e-9, 1e-7]),
+                        'PermMCPPropanol': np.log10([1e-9, 1e-7]),
+                        'PermMCPPropionylCoA': np.log10([1e-7, 1e-5]),
+                        'PermMCPPropionylPhosphate': np.log10([1e-7, 1e-5]),
+                        'NPduCDE': [],
+                        'NPduQ': [],
+                        'PduL': [],
+                        'nmcps': [3,30]}
+
+bMCP_PARAMETER_RANGES = {'PermPolarBody'
+                         'NPduCDE': [],
+                         'NPduQ': [],
+                         'PduL': [],
+                         'nmcps': [3,30]}
 
 # Normal model distribution parameters
 LOG_NORM_MODEL_PRIOR_MEAN = {param_name: np.mean(DATA_LOG_UNIF_PARAMETER_RANGES[param_name])
@@ -67,4 +76,12 @@ LOG_NORM_MODEL_PRIOR_STD = {param_name: (DATA_LOG_UNIF_PARAMETER_RANGES[param_na
 LOG_NORM_MODEL_PRIOR_PARAMETERS = {param_name: [LOG_NORM_MODEL_PRIOR_MEAN[param_name],
                                                 LOG_NORM_MODEL_PRIOR_STD[param_name]]
                                    for param_name in MODEL_PARAMETER_LIST}
+
+# prior parameters for single experiment
+NORM_PRIOR_MEAN_SINGLE_EXP = {}
+NORM_PRIOR_STD_RT_SINGLE_EXP = {}
+for gly_cond in ['WT']:
+    NORM_PRIOR_MEAN_SINGLE_EXP[gly_cond] = np.array([*list(LOG_NORM_MODEL_PRIOR_MEAN.values()),])
+    NORM_PRIOR_STD_RT_SINGLE_EXP[gly_cond] = np.diag([*list(LOG_NORM_MODEL_PRIOR_STD.values())])
+
 

@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from de_builder_sympy import LSAModelBuilder
 from .pdu_mcp_model import pdu_mcp_model
 import multiprocessing as mp
-
+import time
 
 class TimeOutException(Exception):
     pass
@@ -92,8 +92,7 @@ class pdu_mcp_model_log(pdu_mcp_model):
         calibration_params = []
         for param_name in SINGLE_EXP_CALIBRATION_LIST:
             calibration_params.append(params[param_name])
-        print(params)
-        print(calibration_params)
+
         # ODE solver args initialization
         if type == 'qoi only':
             ds = lambda t, x: self.mcp_model.RHS(t, x, calibration_params)
@@ -116,25 +115,29 @@ class pdu_mcp_model_log(pdu_mcp_model):
 
         # initialize FLAG
         FLAG = 0
-        print(y0)
         print(OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * y0[5:11].sum())
 
         init_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * y0[:5].sum() \
                     + OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * y0[5:11].sum() \
                     + self.external_volume * y0[11:17].sum()
+        print('init mass: ' + str(init_mass))
 
         # solve ODE
-        signal.alarm(100)
+        signal.alarm(500)
         time_evals = np.array([])
         sol_evals = np.array([])
         try:
+            time1 = time.time()
             sol = solve_ivp(ds, [0, 1.1 * evaluation_times[-1] * HRS_TO_SECS], y0, method="BDF", jac=ds_jac,
                             t_eval=evaluation_times * HRS_TO_SECS, atol=atol, rtol=rtol)
-
+            time2 = time.time()
             fin_mass = OD_TO_CELL_COUNT * self.cell_conc_od(0) * params['nmcps'] * sol.y[:5, -1].sum() \
                        + OD_TO_CELL_COUNT * self.cell_conc_od(0) * self.cell_volume * sol.y[5:11, -1].sum() \
                        + self.external_volume * sol.y[11:17, -1].sum()
             signal.alarm(0)
+            print('final mass: ' + str(fin_mass))
+            print("sol time: " + str((time2-time1)/60))
+
             time_evals = sol.t
             sol_evals = sol.y.T
 
@@ -142,7 +145,7 @@ class pdu_mcp_model_log(pdu_mcp_model):
             if not sol.success:
                 FLAG = 3
             # check mass growth
-            if fin_mass > 2 * init_mass or np.any(sol.y < -5):
+            if fin_mass > 2 * init_mass or np.any(sol.y[:N_VARIABLES,:] < -5):
                 FLAG = 4
         except ValueError:
             signal.alarm(0)

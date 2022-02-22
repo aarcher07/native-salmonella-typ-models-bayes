@@ -1,0 +1,223 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+library("reticulate")
+library("scales")
+library("fanplot")
+np <- import("numpy")
+```
+
+```{r}
+# import arguments
+ntimepts <- 250
+nsamples <- 1e4
+maxtime <- 29
+home_directory <-"/home/aarcher/pdo-pathway-model/pdu_mcp_model/scripts"
+directory <- paste(home_directory,"/data",sep="")
+directory_plot <- paste(home_directory,"/plot/",sep="")
+```
+
+```{r}
+# load model dataset
+data_set <- np$load(paste(directory,'/sol_conc_prior_nsamples_',nsamples,'_ntimepts_',ntimepts,'_maxtime_',maxtime,'.pkl',sep=''),allow_pickle=TRUE)
+
+```
+
+```{r}
+library(readr)
+#load experimental dataset
+time_series_df <- read_csv("/home/aarcher/pdo-pathway-model/exp_data/data_files/experimental_time_series_cleaned.csv")
+all_time_samples <- time_series_df$`Time (hrs)`
+time_disc <- seq(0,maxtime,length.out=ntimepts)
+```
+
+```{r}
+plot_fun <- function(plot_name, mar =  c(5.1, 7.1, 5.1, 2.1)){
+  png(
+    file=paste(directory_plot,plot_name,sep=''),
+    width     = 2.25,
+    height    = 2.25,
+    units     = "in",
+    res       = 1200,
+    pointsize = 4
+  )
+  par(
+    mar      = mar,
+    xaxs     = "i",
+    yaxs     = "i",
+    cex.axis = 0.9,
+    cex.lab  = 1.25,
+    cex.main = 1.25
+    #bty='n'
+  )
+}
+```
+
+
+
+```{r}
+MBC = 8.5 #TODO double check this value
+MIC= 1.5 #TODO double check this value
+ln = c(5, 20, 50, 80, 95)
+gly_conds <- c(50,60,70,80)
+for(exp_init in 1:4){
+  #data points
+  rows_bool = time_series_df$`Glycerol Init (g/L)` == gly_conds[exp_init]
+  time_samples = time_series_df[rows_bool,]$`Time (hrs)`
+  gly_samples = time_series_df[rows_bool,]$`Glycerol (mM)`
+  pdo_samples = time_series_df[rows_bool,]$`PDO (mM)`
+  
+  #remove any na
+  filter_na <- rowSums(!is.na(data_set[,exp_init,,])) == 6*ntimepts
+  
+  # filter data
+  filter_mass_conserv <- rowSums(data_set[,exp_init,,6] < data_set[,exp_init,1,4]) == ntimepts 
+  filter_non_negative <- rowSums(data_set[,exp_init,,] > -5) == 6*ntimepts
+  filtered_data_set <- data_set[filter_na & filter_mass_conserv & filter_non_negative,exp_init,,]
+  max_timept_sub <- max(time_samples) + 1
+  time_disc_sub <- time_disc[time_disc <= max_timept_sub]
+  ntimepts_sub <- length(time_disc_sub)
+  filtered_data_set <- filtered_data_set[,time_disc <= max_timept_sub,]
+  
+  
+  #plot gly data
+  gly_data <- filtered_data_set[,,4]
+  
+  plot_fun(paste('GLY_ext_',gly_conds[exp_init],'_prior_model_time_series_distribution.png',sep=''),
+           mar = c(5.1, 6.1, 4.1, 4.1))
+  
+  fan0(data=gly_data,
+       xlim=c(-0.375,max_timept_sub),
+       ylim=c(-10,max(data=gly_data)),
+       start =0,
+       frequency = ntimepts/maxtime,
+       ln = c(5,50,95),
+       rcex=0.85,
+       rstagger=TRUE,
+       llab=FALSE,
+       rstagger_vec=c(0.0175,0.020,0.075),
+       rpos=NULL,
+       lpos=NULL,
+       fan.col = colorRampPalette(c("royalblue", "grey", "white")),
+       med.ln =TRUE,
+       med.col="yellow",
+       med.lty=2,
+       ln.col="yellow",
+       ylab="",
+       xlab="",
+       yaxt = "n")
+  points(time_samples,gly_samples,pch=16)
+  legend(x="topright",
+         legend=c("exp. data"),
+         pch=c(16),
+         cex=0.85,
+         col=c('black'))
+  axis(2,las=2)
+  
+  plot_title <- paste('Time series distribution of external glycerol concentration (mM)', ' for initial glycerol concentration, ',gly_conds[exp_init], ' g/L')
+  yaxis_title <- 'External glycerol concentration (mM)'
+  title(paste(strwrap(plot_title, width = 50),collapse='\n'),
+        ylab=paste(strwrap(yaxis_title, 
+                           width = 25),
+                   collapse='\n'),
+        xlab='time (hrs)',
+        cex=2)
+  dev.off()
+  
+  #plot pdo data
+  pdo_data <- filtered_data_set[,,6]
+  quant_max_pdo_data<- apply(pdo_data,2,quantile,probs=0.96)
+  
+  plot_fun(paste('13PDO_ext_',gly_conds[exp_init],'_prior_model_time_series_distribution.png',sep=''), 
+           mar = c(5.1, 6.1, 4.1, 4.1))
+  
+  fan0(data=pdo_data,
+       xlim=c(-0.1,max_timept_sub+0.075*max_timept_sub),
+       ylim=c(0,max(c(max(data=quant_max_pdo_data),
+                      max(pdo_samples) + 10))),
+       start = 0, 
+       frequency = ntimepts/maxtime, 
+       ln = ln,
+       rcex=0.85,
+       rstagger=FALSE,
+       llab=FALSE,
+       rpos=4,
+       lpos=NULL,
+       fan.col = colorRampPalette(c("royalblue", "grey", "white")),
+       med.ln =TRUE,
+       med.col="yellow",
+       med.lty=2,
+       ln.col="yellow",
+       ylab="",
+       xlab="", 
+       yaxt = "n")
+  
+  points(time_samples,pdo_samples,pch=16)
+  legend(x="topleft", 
+         legend=c("exp. data"),
+         pch=c(16),
+         cex=0.85,
+         col=c('black'))
+  axis(2,las=2)
+  plot_title <- paste('Time series distribution of external 1,3-PDO concentration (mM)', ' for initial glycerol concentration, ', gly_conds[exp_init], ' g/L')
+  yaxis_title <- 'External 1,3-PDO concentration (mM)'
+  title(paste(strwrap(plot_title, width = 50),collapse='\n'),
+        ylab=paste(strwrap(yaxis_title, 
+                           width = 25),
+                   collapse='\n'),
+        xlab='time (hrs)')
+  dev.off()
+  
+  plot_fun(paste('3HPA_cyto_',gly_conds[exp_init],'_prior_model_time_series_distribution.png',sep=''),
+           mar = c(5.1, 6.1, 4.1, 4.1))
+  hpa_data <- log10(pmax(filtered_data_set[,,2],10^(-10)))
+  quant_max_hpa_data<-apply(hpa_data,2,quantile,probs=0.99)
+  fan0(data=hpa_data,
+       xlim=c(-0.1,max_timept_sub+0.075*max_timept_sub),
+       ylim=c(min(hpa_data)-0.5,max(data=quant_max_hpa_data)), 
+       start = 0,
+       frequency = ntimepts/maxtime,
+       ln = ln,
+       rcex=0.85,
+       rstagger=TRUE,
+       llab=FALSE,
+       rstagger_vec=c(0.05,0.1,0.25,1,1),
+       rpos=NULL,
+       lpos=NULL,
+       fan.col = colorRampPalette(c("royalblue", "grey", "white")),
+       med.ln =TRUE,
+       med.col="yellow",
+       med.lty=2,
+       ln.col="yellow",
+       ylab="",
+       xlab="", 
+       yaxt = "n")
+  
+  axis(2,las=2)
+  MBC_rep = rep(log10(MBC),length.out=ntimepts_sub)
+  MIC_rep = rep(log10(MIC),length.out=ntimepts_sub)
+
+    lines(time_disc_sub, MBC_rep, lty=2,col=alpha("black",0.6))
+    lines(time_disc_sub, MIC_rep, lty=2,col=alpha("black",0.6))
+
+  axis(2, at=c(log10(MBC)),labels=c(paste(' MBC = ', MBC,'mM ', sep="")),
+       las=2,
+       cex.axis=0.85)
+  axis(2, at=c(log10(MIC)),labels=c(paste(' MIC = ', MIC,'mM  ', sep="")),
+       las=2,
+       cex.axis=0.85)
+  plot_title <- paste('Time series distribution of cytosolic 3-HPA concentration (mM)', ' for initial glycerol concentration, ', gly_conds[exp_init], ' g/L')
+  yaxis_title <- 'Cytosolic 3-HPA  concentration (mM)'
+  title(paste(strwrap(plot_title, width = 50),collapse='\n') ,
+        ylab=paste(strwrap(yaxis_title, 
+                           width = 25),
+                   collapse='\n'),
+        xlab='time (hrs)',
+        cex=2)
+  dev.off()
+}
+```
+

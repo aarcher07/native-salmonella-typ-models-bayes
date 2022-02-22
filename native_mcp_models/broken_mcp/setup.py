@@ -5,5 +5,5 @@ setup(
     version='0.1.0',
     author='Andre Archer',
     author_email='andrearcher2017@u.northwestern.edu',
-    packages= ['native_mcp']
+    packages= ['native_mcp_models']
 )

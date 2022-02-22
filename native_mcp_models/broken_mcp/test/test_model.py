@@ -2,10 +2,11 @@ import matplotlib as mpl
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 import matplotlib.pyplot as plt
-from native_mcp import *
+from native_mcp_models import *
 from exp_data_native import TIME_SAMPLES_BOBIK, DATA_SAMPLES, INIT_CONDS, OD_FIT_PARAMS_MCPS_SIGMOID
 import time
 import sympy as sp
+import numpy as np
 
 def test_QoI():
     def sigmoid(x, L, x0, k):
@@ -14,7 +15,9 @@ def test_QoI():
     od_fun = lambda t: sigmoid(t, *OD_FIT_PARAMS_MCPS_SIGMOID)
     params_mean = list(LOG_NORM_MODEL_PRIOR_MEAN.values())
     params_mean = {key: val for key, val in zip(SINGLE_EXP_CALIBRATION_LIST,params_mean)}
-
+    params_mean['VmaxfPduW'] = -np.inf
+    params_mean['VmaxfPrpE'] = -np.inf
+    params_mean['VmaxfPrpC'] = -np.inf
     params_mean['nmcps'] = 20
     init_conds = {'PROPANEDIOL_MCP_INIT': DATA_SAMPLES['WT'][0,0],
                   'PROPIONALDEHYDE_MCP_INIT': DATA_SAMPLES['WT'][0, 1],
@@ -39,8 +42,7 @@ def test_QoI():
 
     pdu_mcp_model = pdu_mcp_model_log(MCP_VOLUME_SPHERICAL, MCP_SURFACE_AREA_SPHERICAL, od_fun)
     FLAG, qoi_vals, _ = pdu_mcp_model.get_sol_sens(params, evaluation_times=np.linspace(0,TIME_SAMPLES_BOBIK[-1] + 10),
-                                                       type= 'qoi only',rtol=10**-4)
-
+                                                       type= 'qoi sens',rtol=10**-1)
     plt.plot(np.linspace(0,TIME_SAMPLES_BOBIK[-1] + 10),qoi_vals[:,0])
     plt.scatter(TIME_SAMPLES_BOBIK,DATA_SAMPLES['WT'][:,0])
     plt.title('Plot of external 1,2-PD')
